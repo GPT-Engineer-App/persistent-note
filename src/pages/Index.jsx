@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Box, Button, Flex, Input, Text, VStack, useToast, Select } from "@chakra-ui/react";
+import { Box, Button, Flex, Input, Text, VStack, useToast, Select, Link } from "@chakra-ui/react";
 import { FaPlus, FaTrash } from "react-icons/fa";
 import { client } from "lib/crud";
 
@@ -98,7 +98,9 @@ const Index = () => {
       <VStack spacing={4}>
         {notes.map((note) => (
           <Flex key={note.id} align="center" justify="space-between" p={3} w="100%" borderWidth="1px" borderRadius="lg">
-            <Text>{note.text}</Text>
+            <Link to={`/note/${note.id}`}>
+              <Text>{note.text}</Text>
+            </Link>
             <Button onClick={() => deleteNote(note.id)} colorScheme="red">
               <FaTrash />
             </Button>
