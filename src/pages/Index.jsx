@@ -98,7 +98,7 @@ const Index = () => {
       <VStack spacing={4}>
         {notes.map((note) => (
           <Flex key={note.id} align="center" justify="space-between" p={3} w="100%" borderWidth="1px" borderRadius="lg">
-            <Link to={`/note/${note.id}`}>
+            <Link to={`/note/${note.id}`} style={{ width: "100%" }}>
               <Text>{note.text}</Text>
             </Link>
             <Button onClick={() => deleteNote(note.id)} colorScheme="red">
