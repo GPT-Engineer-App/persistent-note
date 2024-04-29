@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Box, Button, Flex, Input, Text, VStack, useToast } from "@chakra-ui/react";
+import { Box, Button, Flex, Input, Text, VStack, useToast, Select } from "@chakra-ui/react";
 import { FaPlus, FaTrash } from "react-icons/fa";
 import { client } from "lib/crud";
 
 const Index = () => {
   const [notes, setNotes] = useState([]);
+  const [sortType, setSortType] = useState("time");
   const [input, setInput] = useState("");
   const toast = useToast();
 
@@ -12,10 +13,29 @@ const Index = () => {
     fetchNotes();
   }, []);
 
+  useEffect(() => {
+    const sortedNotes = sortNotes(notes, sortType);
+    setNotes(sortedNotes);
+  }, [sortType]);
+
+  const sortNotes = (notes, type) => {
+    switch (type) {
+      case "text":
+        return [...notes].sort((a, b) => a.text.localeCompare(b.text));
+      case "time":
+      default:
+        return [...notes].sort((a, b) => parseInt(b.id.split(":")[1]) - parseInt(a.id.split(":")[1]));
+    }
+  };
+
   const fetchNotes = async () => {
     const fetchedNotes = await client.getWithPrefix("note:");
     if (fetchedNotes) {
-      setNotes(fetchedNotes.map((note) => ({ id: note.key, ...note.value })));
+      const sortedFetchedNotes = sortNotes(
+        fetchedNotes.map((note) => ({ id: note.key, ...note.value })),
+        sortType,
+      );
+      setNotes(sortedFetchedNotes);
     }
   };
 
@@ -59,11 +79,17 @@ const Index = () => {
 
   return (
     <Box p={5}>
-      <Flex mb={5}>
-        <Input placeholder="Add a new note..." value={input} onChange={(e) => setInput(e.target.value)} onKeyPress={(e) => e.key === "Enter" && addNote()} />
-        <Button ml={2} onClick={addNote} colorScheme="blue">
-          <FaPlus />
-        </Button>
+      <Flex mb={5} justify="space-between">
+        <Flex>
+          <Input placeholder="Add a new note..." value={input} onChange={(e) => setInput(e.target.value)} onKeyPress={(e) => e.key === "Enter" && addNote()} />
+          <Button ml={2} onClick={addNote} colorScheme="blue">
+            <FaPlus />
+          </Button>
+        </Flex>
+        <Select value={sortType} onChange={(e) => setSortType(e.target.value)}>
+          <option value="time">Sort by Time</option>
+          <option value="text">Sort by Text</option>
+        </Select>
       </Flex>
       <VStack spacing={4}>
         {notes.map((note) => (
