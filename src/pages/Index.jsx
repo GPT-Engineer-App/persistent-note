@@ -16,15 +16,18 @@ const Index = () => {
   useEffect(() => {
     const sortedNotes = sortNotes(notes, sortType);
     setNotes(sortedNotes);
-  }, [sortType]);
+  }, [sortType !== "manual" ? sortType : null]);
 
   const sortNotes = (notes, type) => {
     switch (type) {
       case "text":
         return [...notes].sort((a, b) => a.text.localeCompare(b.text));
       case "time":
-      default:
         return [...notes].sort((a, b) => parseInt(b.id.split(":")[1]) - parseInt(a.id.split(":")[1]));
+      case "manual":
+        return notes;
+      default:
+        return notes;
     }
   };
 
@@ -89,6 +92,7 @@ const Index = () => {
         <Select value={sortType} onChange={(e) => setSortType(e.target.value)}>
           <option value="time">Sort by Time</option>
           <option value="text">Sort by Text</option>
+          <option value="manual">Manual</option>
         </Select>
       </Flex>
       <VStack spacing={4}>
